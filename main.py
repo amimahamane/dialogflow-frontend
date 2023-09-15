@@ -8,6 +8,17 @@ from streamlit.components.v1 import html
 from validate_email import validate_email
 
 
+def clear_chat():
+    response = requests.post(
+        'http://127.0.0.1:8000/clear_chat',
+        data={
+            'token': st.experimental_get_query_params()['token'],
+        }
+    )
+
+    print(response.json())
+
+
 def send_message(message):
     if len(message) > 0:
         response = requests.post(
@@ -159,8 +170,13 @@ def main():
                 with st.chat_message(i["role"]):
                     st.markdown(i["content"])
 
-        with st.chat_message('ai'):
-            st.button('CLEAR CHAT')
+            if len(history) > 0:
+                with st.chat_message('ai'):
+                    st.button('CLEAR CHAT', on_click=clear_chat)
+
+            else:
+                with st.chat_message('ai'):
+                    st.text("Je t'écoute")
 
     else:
         print(st.session_state)
