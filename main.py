@@ -8,7 +8,7 @@ from validate_email import validate_email
 
 def clear_chat():
     response = requests.post(
-        'http://127.0.0.1:8000/clear_chat',
+        'https://dialogflow-backend.vercel.app/clear_chat',
         data={
             'token': st.experimental_get_query_params()['token'],
         }
@@ -20,7 +20,7 @@ def clear_chat():
 def send_message(message):
     if len(message) > 0:
         response = requests.post(
-            'http://127.0.0.1:8000/send_message',
+            'https://dialogflow-backend.vercel.app/send_message',
             data={
                 'message': message,
                 'token': st.experimental_get_query_params()['token'],
@@ -55,7 +55,7 @@ def sign_in(data):
 
         else:
             response = requests.post(
-                'http://127.0.0.1:8000/login',
+                'https://dialogflow-backend.vercel.app/login',
                 data={
                     'email': data[0],
                     'password': data[1],
@@ -95,7 +95,7 @@ def sign_up(data):
 
         else:
             response = requests.post(
-                'http://127.0.0.1:8000/create_account',
+                'https://dialogflow-backend.vercel.app/create_account',
                 data={
                     'email': data[0],
                     'password': data[1],
@@ -155,7 +155,7 @@ def main():
 
         # get history
         response = requests.get(
-            'http://127.0.0.1:8000/get_history',
+            'https://dialogflow-backend.vercel.app/get_history',
             data={
                 'token': st.experimental_get_query_params()['token'],
             }
