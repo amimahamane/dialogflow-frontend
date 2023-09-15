@@ -8,6 +8,22 @@ from streamlit.components.v1 import html
 from validate_email import validate_email
 
 
+def send_message(message):
+    if len(message) > 0:
+        response = requests.post(
+            'http://127.0.0.1:8000/send_message',
+            data={
+                'message': message,
+                'token': st.experimental_get_query_params()['token'],
+            }
+        )
+
+        print(response.json())
+
+    else:
+        st.toast('Tu dois écrire un message')
+
+
 def set_sign_in():
     st.session_state['sign_in'] = True
     if 'sign_up' in st.session_state:
@@ -124,6 +140,9 @@ def main():
     elif 'connected' in st.session_state or 'token' in st.experimental_get_query_params():
         st.session_state['connected'] = True
         chat_input = st.chat_input()
+
+        if chat_input:
+            send_message(chat_input)
 
         # get history
         response = requests.get(
