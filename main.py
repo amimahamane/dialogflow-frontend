@@ -29,24 +29,28 @@ def sign_in(data):
             st.toast('Mot de passe trop court')
 
         else:
-            try:
-                a = requests.post(
-                    'http://127.0.0.1:8000/create_account',
-                    data={
-                        'email': data[0],
-                        'password': data[1],
-                    }
-                )
+            response = requests.post(
+                'http://127.0.0.1:8000/login',
+                data={
+                    'email': data[0],
+                    'password': data[1],
+                }
+            )
 
-                print(a.json())
-                del st.session_state['sign_in']
-                del st.session_state['sign_up']
+            del st.session_state['sign_in']
+            print(response.json()['code'])
+            if response.json()['code'] == 101:
+                st.toast('Mot de passe incorrect')
+                st.session_state['sign_in'] = True
 
-            except:
-                pass
+            elif response.json()['code'] == 100:
+                st.experimental_set_query_params(token=response.json()['token'])
+                st.session_state['connected'] = True
 
-            time.sleep(2)
-            st.session_state['connected'] = True
+            elif response.json()['code'] == 102:
+                st.toast('Une erreur est  survenue, il faut réessayer')
+                st.session_state['sign_in'] = True
+
     else:
         st.toast('Tu dois remplir les champs')
 
@@ -77,11 +81,13 @@ def sign_up(data):
                 st.session_state['sign_in'] = True
 
             elif response.json()['code'] == 100:
-                html(
-                    f'<script>localStorage.setItem("token", {response.json()["token"]});</script>'
-                )
+                st.markdown(f'<script>localStorage.setItem("token", {response.json()["token"]});</script>', unsafe_allow_html=True)
+                st.toast('connected successful')
+                time.sleep(1)
                 st.session_state['connected'] = True
 
+            elif response.json()['code'] == 102:
+                st.toast('Une erreur est  survenue, il faut réessayer')
 
     else:
         st.toast('Tu dois remplir les champs')
@@ -113,7 +119,7 @@ def main():
 
         st.button('créer un compte', on_click=sign_up, args=(data,))
 
-    elif 'connected' in st.session_state:
+    elif 'connected' in st.session_state or 'token' in st.experimental_get_query_params():
         chat_input = st.chat_input()
         st.button('connect')
         st.button('Vider le chat')
