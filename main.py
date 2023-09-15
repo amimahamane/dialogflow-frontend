@@ -3,8 +3,6 @@ import time
 
 import requests
 import streamlit as st
-from streamlit_javascript import st_javascript as st_js
-from streamlit.components.v1 import html
 from validate_email import validate_email
 
 
